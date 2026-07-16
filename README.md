@@ -81,4 +81,4 @@ PolicyPulse aims to reduce manual HR operations by transforming static policy do
 - Multi-language policy analysis
 - Compliance risk detection
 - HR chatbot interface for policy questions
-- Automated employee communication workflows
+
