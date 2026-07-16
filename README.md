@@ -7,6 +7,8 @@ PolicyPulse is an AI-powered HR policy intelligence agent designed to help organ
 
 HR policies evolve frequently due to regulatory updates, organizational changes, and business requirements. Manually reviewing policy documents and determining affected employee groups can be time-consuming and error-prone. PolicyPulse automates this process by analyzing policy documents, detecting meaningful changes, and generating targeted employee impact insights.
 
+Loom link - https://www.loom.com/share/2abae4b56123438db3141a652c679b63
+
 ## Key Capabilities
 
 - **Automated Policy Comparison**
