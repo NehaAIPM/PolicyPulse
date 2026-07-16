@@ -1,0 +1,179 @@
+{
+  "name": "Email workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "0fe8e1ae-229e-43eb-aa04-952a180894dc",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -224,
+        0
+      ],
+      "id": "d2376d9e-0398-488c-843a-5a48b7ddbe9f",
+      "name": "Webhook",
+      "webhookId": "0fe8e1ae-229e-43eb-aa04-952a180894dc"
+    },
+    {
+      "parameters": {
+        "jsCode": "const notifications = $json.body?.notifications;\n\nif (!Array.isArray(notifications)) {\n  return [];\n}\n\nreturn notifications.map((n) => ({\n  json: {\n    id: n.id ?? \"\",\n    employeeId: n.employeeId ?? \"\",\n    employeeName: n.employeeName ?? \"\",\n    message: n.message ?? \"\",\n    status: n.status ?? \"draft\",\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        -48
+      ],
+      "id": "be17a8a4-0865-4daf-a76c-270707225ffb",
+      "name": "Code in JavaScript",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "employee_id",
+              "field2": "employeeId"
+            }
+          ]
+        },
+        "joinMode": "enrichInput2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        400,
+        0
+      ],
+      "id": "0917deca-00b1-4a86-8878-3fe02dc7f6d6",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "employee_details",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "employee_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.employeeId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        176,
+        -144
+      ],
+      "id": "212c0705-5494-45f0-bbcd-54497728a9fa",
+      "name": "Get many rows",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "llLJe8UGxtLpsdLr",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Important Update to Company Policy",
+        "emailType": "text",
+        "message": "={{ $json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        0
+      ],
+      "id": "7326508a-58f0-4947-a21b-5633dee9cc13",
+      "name": "Send a message",
+      "webhookId": "d2385b42-34ae-48e7-84ac-0579488e55b7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "sXKcKUAIeNuCIxWh",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f9fbf069-23bd-4fce-a11b-e226d1ae9045",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "21c6c121864167de4c5b549bf8ebf9653b46ca9b432c2a79c7912f2bd565547d"
+  },
+  "nodeGroups": [],
+  "id": "p8mBGNSc61Ph029U",
+  "tags": []
+}
